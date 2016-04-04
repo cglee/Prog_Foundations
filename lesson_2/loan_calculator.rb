@@ -43,7 +43,7 @@ loop do
             (monthly_int * (1 + monthly_int)**term_months) /
             ((1 + monthly_int)**term_months - 1)
 
-  prompt("title", "Your monthly payment is: €#{payment.round(2)}\n")
+  prompt("title", "Your monthly payment is: €#{payment.round(2)}")
 
   prompt("input", "Would you like to perform another calculation (y for yes):")
   again = gets.chomp

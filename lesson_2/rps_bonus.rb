@@ -1,4 +1,4 @@
-VALID_CHOICES = {"r"=> "rock", "p"=> "paper", "s"=> "scissors", "l"=> "lizard", "sp"=> "spock"}
+VALID_CHOICES = { "r" => "rock", "p" => "paper", "s" => "scissors", "l" => "lizard", "sp" => "spock" }.freeze
 
 def prompt(style, message)
   puts "*** #{message} ***" if style == "title"
@@ -8,10 +8,10 @@ end
 
 def win?(choice1, choice2)
   (choice1 == "rock" && (choice2 == "lizard" || choice2 == "scissors")) ||
-  (choice1 == "paper" && (choice2 == "rock" || choice2 == "spock")) ||
-  (choice1 == "scissors" && (choice2 == "lizard" || choice2 == "paper")) ||
-  (choice1 == "lizard" && (choice2 == "paper" || choice2 == "spock")) ||
-  (choice1 == "spock" && (choice2 == "rock" || choice2 == "scissors"))
+    (choice1 == "paper" && (choice2 == "rock" || choice2 == "spock")) ||
+    (choice1 == "scissors" && (choice2 == "lizard" || choice2 == "paper")) ||
+    (choice1 == "lizard" && (choice2 == "paper" || choice2 == "spock")) ||
+    (choice1 == "spock" && (choice2 == "rock" || choice2 == "scissors"))
 end
 
 def result(player, computer)
@@ -29,15 +29,15 @@ end
 
 prompt("title", "Welcome to Rock Papaer Scissors (Extended...)!")
 
-loop do 
+loop do
   score = [0, 0]
-  n= score.max
-  
+  n = score.max
+
   prompt("input", "First to 5 wins the game.")
 
-  while n < 5 do
-    prompt("input", "Select from:\n") 
-    VALID_CHOICES.each{|key, value| puts "#{key} - to select #{value}"}
+  while n < 5
+    prompt("input", "Select from:\n")
+    VALID_CHOICES.each { |key, value| puts "#{key} - to select #{value}" }
 
     user_choice = ""
 
@@ -48,14 +48,14 @@ loop do
         break
       end
       prompt("error", "Invalid Choice. Please select from:")
-      VALID_CHOICES.each{|key, value| puts "#{key} - to select #{value}"}
+      VALID_CHOICES.each { |key, value| puts "#{key} - to select #{value}" }
     end
 
     computer_choice = VALID_CHOICES.values.sample
 
     prompt("input", "You chose #{user_choice} and the computer chose #{computer_choice}:")
     increment = result(user_choice, computer_choice)
-    score = [score, increment].transpose.map{|x| x.reduce(:+)}
+    score = [score, increment].transpose.map { |x| x.reduce(:+) }
     n = score.max
 
     prompt("input", "Current score is:\nYou: #{score[0]}\nComputer: #{score[1]}")
@@ -68,7 +68,7 @@ loop do
   end
   prompt("input", "Would you like to play again? Enter 'y' - for yes")
   again = gets.chomp
-  break unless again.downcase == "y"
-  end
+  break unless again.casecmp("y") == 0
+end
 
 prompt("title", "Thank you for playing RPS. Good Bye.")

@@ -1,9 +1,12 @@
 VALID_CHOICES = { "r" => "rock", "p" => "paper", "s" => "scissors", "l" => "lizard", "sp" => "spock" }.freeze
 
 def prompt(style, message)
-  puts "*** #{message} ***\n-------------" if style == "title"
-  puts "=> #{message}" if style == "input"
-  puts "!!! #{message} !!!" if style == "error"
+  case style
+  when "title" then puts "*** #{message} ***\n-------------"
+  when "input" then puts "=> #{message}"
+  when "error" then puts "!!! #{message} !!!"
+  else puts message
+  end
 end
 
 def first_arg_win?(choice1, choice2)

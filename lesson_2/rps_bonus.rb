@@ -1,30 +1,34 @@
 VALID_CHOICES = { "r" => "rock", "p" => "paper", "s" => "scissors", "l" => "lizard", "sp" => "spock" }.freeze
 
 def prompt(style, message)
-  puts "*** #{message} ***" if style == "title"
+  puts "*** #{message} ***\n-------------" if style == "title"
   puts "=> #{message}" if style == "input"
   puts "!!! #{message} !!!" if style == "error"
 end
 
-def win?(choice1, choice2)
-  (choice1 == "rock" && (choice2 == "lizard" || choice2 == "scissors")) ||
-    (choice1 == "paper" && (choice2 == "rock" || choice2 == "spock")) ||
-    (choice1 == "scissors" && (choice2 == "lizard" || choice2 == "paper")) ||
-    (choice1 == "lizard" && (choice2 == "paper" || choice2 == "spock")) ||
-    (choice1 == "spock" && (choice2 == "rock" || choice2 == "scissors"))
+def first_arg_win?(choice1, choice2)
+  (choice1 == "rock" && %w(lizard scissors).include?(choice2)) ||
+    (choice1 == "paper" && %w(rock spock).include?(choice2)) ||
+    (choice1 == "scissors" && %w(lizard paper).include?(choice2)) ||
+    (choice1 == "lizard" && %w(paper spock).include?(choice2)) ||
+    (choice1 == "spock" && %w(rock scissors).include?(choice2))
 end
 
 def result(player, computer)
-  if win?(player, computer)
+  if first_arg_win?(player, computer)
     prompt("title", "You Won!")
     return [1, 0]
-  elsif win?(computer, player)
-    prompt("input", "You Lost.")
+  elsif first_arg_win?(computer, player)
+    prompt("title", "You Lost.")
     return [0, 1]
   else
-    prompt("input", "It's a tie.")
+    prompt("title", "It's a tie.")
     return [0, 0]
   end
+end
+
+def print_options
+  VALID_CHOICES.each { |key, value| puts "#{key} - to select #{value}" }
 end
 
 prompt("title", "Welcome to Rock Papaer Scissors (Extended...)!")
@@ -37,7 +41,7 @@ loop do
 
   while n < 5
     prompt("input", "Select from:\n")
-    VALID_CHOICES.each { |key, value| puts "#{key} - to select #{value}" }
+    print_options
 
     user_choice = ""
 
@@ -48,7 +52,7 @@ loop do
         break
       end
       prompt("error", "Invalid Choice. Please select from:")
-      VALID_CHOICES.each { |key, value| puts "#{key} - to select #{value}" }
+      print_options
     end
 
     computer_choice = VALID_CHOICES.values.sample
@@ -69,6 +73,7 @@ loop do
   prompt("input", "Would you like to play again? Enter 'y' - for yes")
   again = gets.chomp
   break unless again.casecmp("y") == 0
+  system("clear")
 end
 
 prompt("title", "Thank you for playing RPS. Good Bye.")

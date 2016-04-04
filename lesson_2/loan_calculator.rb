@@ -9,7 +9,7 @@ def valid_number?(number)
 end
 
 prompt("title", "Welcome To The Loan Calculator!")
-loop do 
+loop do
   prompt("input", "Please enter the loan amount\n(Must be a positive number excluding the currency symbol and any commas e.g. 250750 instead of $250,750):")
   loan_amount = ""
   loop do

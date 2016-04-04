@@ -35,11 +35,10 @@ prompt("title", "Welcome to Rock Papaer Scissors (Extended...)!")
 
 loop do
   score = [0, 0]
-  n = score.max
 
   prompt("input", "First to 5 wins the game.")
 
-  while n < 5
+  while score.max < 5
     prompt("input", "Select from:\n")
     print_options
 
@@ -48,7 +47,7 @@ loop do
     loop do
       user_choice = gets.chomp
       if VALID_CHOICES.keys.include?(user_choice.downcase)
-        user_choice = VALID_CHOICES[user_choice]
+        user_choice = VALID_CHOICES[user_choice.downcase]
         break
       end
       prompt("error", "Invalid Choice. Please select from:")

@@ -17,18 +17,18 @@ end
 def result(player, computer)
   if first_arg_win?(player, computer)
     prompt("title", "You Won!")
-    return [1, 0]
+    [1, 0]
   elsif first_arg_win?(computer, player)
     prompt("title", "You Lost.")
-    return [0, 1]
+    [0, 1]
   else
     prompt("title", "It's a tie.")
-    return [0, 0]
+    [0, 0]
   end
 end
 
 def print_options
-  VALID_CHOICES.each { |key, value| puts "#{key} - to select #{value}" }
+  VALID_CHOICES.each { |abbr, choice| puts "#{abbr} - to select #{choice}" }
 end
 
 prompt("title", "Welcome to Rock Papaer Scissors (Extended...)!")
@@ -59,7 +59,6 @@ loop do
     prompt("input", "You chose #{user_choice} and the computer chose #{computer_choice}:")
     increment = result(user_choice, computer_choice)
     score = [score, increment].transpose.map { |x| x.reduce(:+) }
-    n = score.max
 
     prompt("input", "Current score is:\nYou: #{score[0]}\nComputer: #{score[1]}")
   end

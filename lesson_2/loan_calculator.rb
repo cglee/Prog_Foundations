@@ -47,5 +47,7 @@ loop do
 
   prompt("input", "Would you like to perform another calculation (y for yes):")
   again = gets.chomp
-  break unless again == "y"
+  break unless again.downcase == "y"
 end
+
+prompt("title", "Thank you for using the calculator. Good Bye.")

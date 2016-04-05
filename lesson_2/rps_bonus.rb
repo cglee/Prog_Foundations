@@ -37,11 +37,11 @@ end
 prompt("title", "Welcome to Rock Papaer Scissors (Extended...)!")
 
 loop do
-  score = [0, 0]
+  total_score = [0, 0]
 
   prompt("input", "First to 5 wins the game.")
 
-  while score.max < 5
+  while total_score.max < 5
     prompt("input", "Select from:\n")
     print_options
 
@@ -60,16 +60,16 @@ loop do
     computer_choice = VALID_CHOICES.values.sample
 
     prompt("input", "You chose #{user_choice} and the computer chose #{computer_choice}:")
-    increment = result(user_choice, computer_choice)
-    score = [score, increment].transpose.map { |x| x.reduce(:+) }
+    round_score = result(user_choice, computer_choice)
+    total_score = [total_score, round_score].transpose.map { |x| x.reduce(:+) }
 
-    prompt("input", "Current score is:\nYou: #{score[0]}\nComputer: #{score[1]}")
+    prompt("input", "Current score is:\nYou: #{total_score[0]}\nComputer: #{total_score[1]}")
   end
 
-  if score[0] == 5
-    prompt("title", "Congratulations! you won by #{score[0]} to #{score[1]} games.")
+  if total_score[0] == 5
+    prompt("title", "Congratulations! you won by #{total_score[0]} to #{total_score[1]} games.")
   else
-    prompt("title", "Better luck next time! you lost by #{score[0]} to #{score[1]} games.")
+    prompt("title", "Better luck next time! you lost by #{total_score[0]} to #{total_score[1]} games.")
   end
   prompt("input", "Would you like to play again? Enter 'y' - for yes")
   again = gets.chomp

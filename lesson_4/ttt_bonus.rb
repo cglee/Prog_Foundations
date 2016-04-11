@@ -4,7 +4,7 @@ WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + #horizontal
 
 PLAYER_MARKER = "X".freeze
 COMPUTER_MARKER = "O".freeze
-LEVEL = {1=> "Easy", 2=> "Medium", 3=> "Hard"}
+LEVEL = {1=> "Easy", 2=> "Medium", 3=> "Hard", 4=> "LEGENDARY"}
 
 def prompt(style, message)
   case style
@@ -26,8 +26,9 @@ def initial_board
   new_board
 end
 
-def display_board(brd, level)
+def display_board(brd, level, hash)
   puts "You're Marker: #{PLAYER_MARKER}\nComputer Marker: #{COMPUTER_MARKER}\nLevel: #{LEVEL[level]}"
+  display_score(hash)
   puts "      |      |      "
   puts "  #{brd[1]}   |  #{brd[2]}   |  #{brd[3]}   "
   puts "______|______|______"
@@ -54,17 +55,62 @@ def player_places_piece!(brd)
   brd[chosen_position] = PLAYER_MARKER
 end
 
+def random_selection(brd)
+  random_choice = available_squares(brd).sample
+  brd[random_choice] = COMPUTER_MARKER
+end
+
+def minimax_payoff(brd)
+    if winner(brd) == "Player"
+      -10
+    elsif winner(brd) == "Computer"
+      10
+    else
+      0
+    end
+end
+
+  def minimax_optimal_move(brd, counter)
+    return minimax_payoff(brd), nil if (winner(brd) || available_squares(brd).empty?)
+
+    #optimal_move = optimal_move || nil
+    if counter == 0
+      @max_payoff= -11
+    elsif counter == 1
+      @max_payoff = 11
+    end
+    counter%2 == 0 ? marker = 'O' : marker = 'X'
+
+    available_squares(brd).each do |position|
+      cloned_brd = brd.clone
+      cloned_brd[position] = marker
+      payoff = minimax_optimal_move(cloned_brd, counter+1)[0]
+      payoff =  -payoff
+      if counter%2 == 0
+        if (payoff>@max_payoff)
+          @max_payoff = payoff
+          @optimal_move = position
+        end
+      else
+          if (payoff<@max_payoff)
+          @max_payoff = payoff
+          @optimal_move = position
+        end
+      end
+    end
+
+  return @max_payoff, @optimal_move
+end
+
 def computer_places_piece!(brd, level=1)
   case level
   when 1
-    random_choice = available_squares(brd).sample
-    brd[random_choice] = COMPUTER_MARKER
+    random_selection(brd)
   when 2
     if player_square_to_win(brd)
       brd[player_square_to_win(brd)] = COMPUTER_MARKER
     else
-      random_choice = available_squares(brd).sample
-      brd[random_choice] = COMPUTER_MARKER
+      random_selection(brd)
     end
   when 3
     if computer_square_to_win(brd)
@@ -74,9 +120,11 @@ def computer_places_piece!(brd, level=1)
     elsif brd[5] == " "
       brd[5] = COMPUTER_MARKER
     else
-      random_choice = available_squares(brd).sample
-      brd[random_choice] = COMPUTER_MARKER
+      random_selection(brd)
     end
+  when 4
+    cloned_brd = brd.clone
+    brd[minimax_optimal_move(cloned_brd, 0)[1]] = COMPUTER_MARKER
   end
 end
 
@@ -138,6 +186,26 @@ def display_score(hash)
   hash.each { |name, score| puts "#{name}: #{score}\n" }
 end
 
+def display_round_result(brd)
+  if winner(brd) == "Player"
+    prompt('input', "You Win this round!")
+    sleep(2)
+  elsif winner(brd) == "Computer"
+    prompt('input', "Computer Wins this round.")
+    sleep(2)
+  else
+    prompt("input", "It's a tie")
+    sleep(2)
+  end
+end
+
+def score_increment(brd, score_hash)
+  case winner(brd)
+  when "Player" then score_hash["Player"] += 1
+  when "Computer" then score_hash["Computer"] += 1
+  end
+end 
+
 prompt('title', "Welcome to Tic Tac Toe!")
 
 loop do
@@ -149,12 +217,12 @@ loop do
     prompt("error", "Invalid entry. Choose a whole number greater than 0.")
   end
 
-  prompt("input", "Choose difficulty level:\n- Select 1 for easy\n- Select 2 for medium\n- Select 3 for hard")
+  prompt("input", "Choose difficulty level:\n- Select 1 for easy\n- Select 2 for medium\n- Select 3 for hard\n- Select 4 for LEGENDARY")
   difficulty = ""
   loop do
     difficulty = gets.chomp.to_i
-    break if difficulty.to_s =~ /[1-3]/
-    prompt("error", "Invalid entry. Choose a number between 1-3.")
+    break if difficulty.to_s =~ /[1-4]/
+    prompt("error", "Invalid entry. Choose a number between 1-4.")
   end
 
   prompt("input", "Would you like to make the first move? (Select 'y' for Yes, 'n' for No.)")
@@ -171,26 +239,20 @@ loop do
   while current_score.values.max < number_of_rounds # Main game loop
    
     board = initial_board
-    display_board(board, difficulty)
-    display_score(current_score)
+    display_board(board, difficulty, current_score)
 
     loop do # Loop for each round
       places_piece!(players_turn, board, difficulty)
-      system('clear')
-      display_board(board, difficulty)
-      break if game_over?(board)
       players_turn = !players_turn
+      system('clear')
+      display_board(board, difficulty, current_score)
+      break if game_over?(board)
     end
 
-    if winner(board) == "Player"
-      prompt('input', "You Win this round!")
-      current_score["Player"] += 1
-    elsif winner(board) == "Computer"
-      prompt('input', "Computer Wins this round.")
-      current_score["Computer"] += 1
-    else
-      prompt("input", "It's a tie")
-    end
+    display_round_result(board)
+    score_increment(board, current_score)
+    display_score(current_score)
+    sleep(2)
   end
 
   if current_score["Player"] > current_score["Computer"]
